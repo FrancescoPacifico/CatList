@@ -130,3 +130,129 @@ void printList(struct node *a) {
 		printf("%d\n", a -> key);
 	}
 }
+
+/* ENG:
+ * In the same way we can calculate the length of a list.
+ * ITA:
+ * Allo stesso modo possiamo calcolare la lunghezza di una lista. */
+
+int listLen(struct node *a) {
+	int i;
+	for(i = 0; a != NULL; a = a -> succ, i++);
+	return i;
+}
+
+/* ENG:
+ * Now we have all the basic tools needed to manage a list, but it's always better to create more complex functions to make the job easier.
+ * We can start by creating a function that adds a node in the second position of a list (index 1, because the first index is 0).
+ * This will be very useful later.
+ * ITA:
+ * Ora abbiamo tutti gli strumenti di base necessari per gestire una lista, ma è sempre meglio creare funzioni più complesse per rendere il lavoro più facile.
+ * Possiamo cominciare creando una funzione che aggiunge un nodo nella seconda posizione di una lista (indice 1, poichè il primo indice è 0).
+ * Ciò sarà molto utile in seguito. */
+
+/* ENG:
+ * This function is very similar to append0: we create a node and assign the 'n' input key to it, then we set its previous node to 'a' (because 'a' is still the first node) and
+ * its following node to 'a -> succ'(beacuase 'p' will be between 'a' and its following).
+ * 'a -> succ' is no more the same as before, because we put 'p' in that position, so we must update 'a -> succ' to 'p'.
+ * If 'a' was a list made of just one node, then 'a -> succ', before the update, was NULL, and so is 'p -> succ' now because it took its value;
+ * so we must be careful and put the condition 'p -> succ != NULL' before updating its pointer to the previous node (that must be 'p').
+ * ITA:
+ * Questa funzione è molto simile ad append0: creiamo un nodo e assegnamo la chiave in input 'n' ad esso, poi impostiamo il suo nodo precedente ad 'a' (poichè 'a' è ancora il primo nodo) e
+ * il suo successivo a 'a -> succ' (poichè 'p' sarà tra 'a' e il suo successivo).
+ * 'a -> succ' non è lo stesso di prima, poichè abbiamo inserito 'p' in quella posizione, perciò dobbiamo aggiornare 'a -> succ' a 'p'.
+ * Se 'a' era una lista fatta di un solo nodo, allora 'a -> succ', prima dell'aggiornamento, era NULL, e tale è ora 'p -> succ' perchè ha preso il suo valore;
+ * quindi dobbiamo fare attenzione e porre la condizione 'p -> succ != NULL' prima di aggiornare il suo puntatore al nodo precedente (che dovrà essere 'p'). */
+
+struct node *append1(struct node *a, int n) {
+	struct node *p;
+	if(a != NULL) {
+		p = malloc(sizeof(struct node));
+		p -> key = n;
+		p -> prev = a;
+		p -> succ = a -> succ;
+		a -> succ = p;
+		if(p -> succ != NULL) {
+			p -> succ -> prev = p;
+		}
+	}
+	return a;
+}
+
+/* ENG:
+ * In the same way we can easily creaete a function that pops the node at index 1. We simply must remember to call the free function from stdlib and pay attenction to the
+ * links between the nodes we are working on.
+ * ITA:
+ * Allo stesso modo possiamo facilmente creare una funzione che elimina il nodo all'indice 1. Dobbiamo semplicemente ricordare di chiamare la funzione free da stdlib e prestare
+ * attenzione ai collegamenti tra i nodi su cui stiamo lavorando. */
+
+struct node *pop1(struct node *a) {
+	struct node *temp;
+	if(a != NULL) {
+		if(a -> succ != NULL) {
+			temp = a -> succ;
+			a -> succ = temp -> succ;
+			if(temp -> succ != NULL) {
+				temp -> succ -> prev = a;
+			}
+			free(temp);
+		}
+	}
+	return a;
+}
+
+/* ENG:
+ * It may be useful to have a function that takes a list and an integer that represents an index as input and return a pointer to the node at that index position in the list,
+ * if it exists. Building it is very easy: we'll use the same structure of the prinList function, but this time we'll stop the cycle when we reach a certain index. So we need to count
+ * how many cycles we do. To do it, we'll decrease the input index until it reaches 0 while we increase the pointer to node with 'a = a -> succ' (always using the condition 'a -> NULL', in
+ * case an "out of range" index is given to the function).
+ * ITA:
+ * Può essere utile avere una funzione che prende in input una lista e un intero che rappresenta un indice e restituisce un puntatore al nodo nella posizione di quell'indice all'interno della lista,
+ * se esiste. Costruirla è molto semplice: useremo la stessa struttura della funzione printList, ma questa volta fermeremo il ciclo quando raggiungiamo un certo indice. Dunzue abbiamo bisogno
+ * di contare quanti cicli facciamo. Per farlo, diminuiremo l'indice in input finchè non ranggiunge 0 mentre incrementiamo il puntatore a nodo con 'a = a -> succ' (sempre ponendo la condizione
+ * 'a != NULL, nel caso venga passato alla funzione un indice troppo grande). */
+
+struct node *findIndex(struct node *a, int i) {
+	for(;a != NULL && i > 0; a = a -> succ, i--);
+	return a;
+}
+
+/* ENG:
+ * Now that we have built these last three functions, we can use them to achieve something useful.
+ * We've already said that a list in not more than a pointer to a node, so if we take pointer to a node in the middle of a list, we can consider it as another list (a sub-list).
+ * So, if we reach that middle node, we can call the function appen1 or pop1 with no problem at all (not append0 and pop0, beacuase they only work if the previous node is NULL).
+ * We'll now create two functions that use findIndex to reach a node in a list to add a node immediately after or pop the node immeditely after.
+ * ITA:
+ * Ora che abbiamo costruito queste ultime tre funzioni, possiamo usarle per ottenere qualcosa di utile.
+ * Abbiamo già detto che una lista non è altro che un puntatore a un nodo, dunque se prendiamo un puntatore a un nodo nel mezzo della lista, possiamo considerarlo come un'altra lista (una sotto-lista).
+ * Quindi, se raggiungiamo tale nodo, possiamo chiamare la funzione append1 o pop1 senza alcun problema (non append0 o pop0, perchè esse funzionano solo se il nodo precedente è NULL).
+ * Ora costruiremo due funzioni che usano findIndex per raggiungere un nodo in una lista per aggiungere un nodo immediatamente dopo o per eliminare il nodo immediatamente dopo. */
+
+struct node *append(struct node *a, int i, int n) {
+	if(i <= 0) {
+		return append0(a, n);
+	}
+	append1(findIndex(a, i - 1), n);
+	return a;
+}
+
+struct node *pop(struct node *a, int i) {
+	if(i <= 0) {
+		return pop0(a);
+	}
+	pop1(findIndex(a, i - 1));
+	return a;
+}
+
+/* ENG:
+ * It's easy to calculate the cost of these functions in terms of time.
+ * There are functions whose cost is not influenced by the length of the input list, like append0, append1, pop0 and pop1;
+ * and other functions that necessarily have to check every node in the list, like printList and listLen; so... the more it's long the more it costs.
+ * But there are also functions whose cost depends on another parameter. For example, in the findIndex function we make 'i' cycles and 'i' is given as input.
+ * So, in this case we have to calculate the cost of the function in the worst case possible, that's 'i' = 'l', where 'l' is the length of the list.
+ * ITA:
+ * E' facile calcolare il costo di queste funzioni in termini di tempo.
+ * Ci sono funzioni il cui costo non è influenzato dalla lunghezza della lista in input, come append0, append1, pop0 e pop1;
+ * e altre funzioni che necessariamente devono controllare ogni nodo nella lista, come printList e listLen; dunque... più è lunga più costa.
+ * Ma ci sono anche funczioni il cui costo dipende da un altro parametro. Per esempio, nella funzione findIndex eseguiamo 'i' cicli e 'i' è dato come input.
+ * Dunque, in questo caso dobbiamo calcolare il costo della funzone nel caso peggiore possibile, che è 'i' = 'l', dove 'l' è la lunghezza della lista. */
