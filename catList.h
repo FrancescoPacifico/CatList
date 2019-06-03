@@ -17,6 +17,17 @@ struct node {
 	struct node *prev, *succ;
 };
 
+struct node *newList(void);
+struct node *append0(struct node *, int);
+struct node *pop0(struct node *);
+void printList(struct node *);
+int listLen(struct node *);
+struct node *append1(struct node *, int);
+struct node *pop1(struct node *);
+struct node *findIndex(struct node *, int);
+struct node *append(struct node *, int, int);
+struct node *pop(struct node *, int);
+
 /* ENG:
  * In order to manage a list like this we'll need some functions:
  * -One to create the list.

@@ -1,16 +1,5 @@
 #include "catList.h"
 
-struct node *newList(void);
-struct node *append0(struct node *, int);
-struct node *pop0(struct node *);
-void printList(struct node *);
-int listLen(struct node *);
-struct node *append1(struct node *, int);
-struct node *pop1(struct node *);
-struct node *findIndex(struct node *, int);
-struct node *append(struct node *, int, int);
-struct node *pop(struct node *, int);
-
 int main() {
 	struct node *list = newList();
 	int i;
