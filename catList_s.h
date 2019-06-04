@@ -11,19 +11,20 @@
 
 struct node_s {
 	char *key;
-	struct node *prev, *succ;
+	struct node_s *prev, *succ;
 };
 
-struct node *newList(void);
-struct node *append0(struct node *, char *);
-struct node *pop0(struct node *);
+struct node_s *newList_s(void);
+struct node_s *append0_s(struct node_s *, char *);
+struct node_s *pop0_s(struct node_s *);
+void printList_s(struct node_s *);
 
 /* EN:
  * No changes in the newList function.
  * ITA:
  * Nessun cambiamento nella funzione newList. */
 
-struct node *newList(void) {
+struct node_s *newList_s(void) {
 	return NULL;
 }
 
@@ -42,8 +43,8 @@ struct node *newList(void) {
  * carattere della stringa '\0' quando ne calcola la lunghezza.
  * Dopo aver allocato memoria sufficiente per la stringa, possiamo finalmente copiarla usando la funzione strcpy dell'intestazione string. */
 
-struct node *append0(struct node *a, char *s) {
-	struct node *p = malloc(sizeof(struct node));
+struct node_s *append0_s(struct node_s *a, char *s) {
+	struct node_s *p = malloc(sizeof(struct node_s));
 	p -> key = malloc(strlen(s) + 1), p -> prev = NULL, p -> succ = a;
 	strcpy(p -> key, s);
 	if(a != NULL) {
@@ -56,8 +57,24 @@ struct node *append0(struct node *a, char *s) {
  * When we pop a node from the list we must call the free function from stdlib header to free the space pointed by a pointer.
  * In this case, beacause the nodes are made of a pointer to char, we must free the memory pointed by this pointer first, and then the one pointed by the pointer to node.
  * ITA:
- * Quando eliminiamo un nodo dalla lista dobbiamo invocare la funzione free dell'intestazione stlib per liberare lo spazio puntato da un puntatore.
+ * Quando eliminiamo un nodo dalla lista dobbiamo invocare la funzione free dell'intestazione stdlib per liberare lo spazio puntato da un puntatore.
  * In questo caso, poichè i nodi sono composti da un puntatore a char, dobbiamo prima liberare la memoria puntata da questo puntatore, e poit quella puntata dal puntatore a nodo. */
 
-struct node *pop0(struct node *a) {
+struct node_s *pop0_s(struct node_s *a) {
+	struct node_s *p = NULL;
+	if(a != NULL) {
+		p = a -> succ;
+		if(p != NULL) {
+			p -> prev = NULL;
+		}
+		free(a -> key);
+		free(a);
+	}
+	return p;
+}
+
+void printList_s(struct node_s *a) {
+	for(; a != NULL; a = a -> succ) {
+		printf("%s\n", a -> key);
+	}
 }
